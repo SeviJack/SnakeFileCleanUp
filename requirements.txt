@@ -1,0 +1,4 @@
+pyautogui
+keyboard
+screeninfo
+win32api
