@@ -10,16 +10,14 @@ YSTEP = 100
 # user screen infos
 RES = (1920, 1080)
 GRID_BOUNDS = (24,10)
-MAX_X = GRID_BOUNDS[0]*XSTEP
-MAX_Y = GRID_BOUNDS[1]*YSTEP
 
 MORE_MON = False
 
 # global game data
 TICK = 0.2
-snake = deque([(10, 10 + YSTEP*2),(10, 10 + YSTEP),(10,10)])
+snake = deque([(0,2),(0,1),(0,0)])
 occupied = set(snake)
-apple = (10+XSTEP*2,10)
+apple = (2,0)
 hx, hy = snake[0] #head cords
 
 # Game logic
@@ -47,11 +45,11 @@ def play():
 
 def step(dir):
     global hx, hy
-    nx = hx + dir[0]*XSTEP
-    ny = hy + dir[1]*YSTEP
+    nx = hx + dir[0]
+    ny = hy + dir[1]
 
     #bounds    
-    if nx > MAX_X or ny > MAX_Y or nx < 0 or ny < 0:
+    if nx > GRID_BOUNDS[0] or ny > GRID_BOUNDS[1] or nx < 0 or ny < 0:
         print(hx, hy)
         return True
     if nx != apple[0] or ny != apple[1]:
@@ -59,23 +57,19 @@ def step(dir):
     snake.appendleft((nx, ny))
     hx, hy = nx, ny
     print(snake)
-
-    pyautogui.moveTo(tail[0],tail[1])
-    pyautogui.mouseDown()
-    pyautogui.moveTo(hx, hy)
-    pyautogui.mouseUp()
+    move(tail,(hx,hy))
+    
     return False
     
 def round_setup():
     # make target
     global apple
-    rx = random.randint(2,GRID_BOUNDS[0])*XSTEP
-    ry = random.randint(1,GRID_BOUNDS[1])*YSTEP
-    pyautogui.moveTo(apple[0],apple[1])
-    pyautogui.mouseDown()
-    pyautogui.moveTo(rx, ry)
-    pyautogui.mouseUp()
+    rx = random.randint(2,GRID_BOUNDS[0])
+    ry = random.randint(1,GRID_BOUNDS[1])
+    move(apple,(rx,ry) )
+
     apple = rx, ry
+
 # File logic
 # def set_up():
 #     desktop = os.path
@@ -87,5 +81,16 @@ def round_setup():
 
 def clean_up():
     print("peace")
+
+# def reset(dead_snake):
+#     if len(dead_snake) != 0:
+#         home = dead_snake.pop()
+        
+
+def move(origin, dest):
+    pyautogui.moveTo(origin[0]*XSTEP+10,origin[1]*YSTEP+10)
+    pyautogui.mouseDown()
+    pyautogui.moveTo(dest[0]*XSTEP+10, dest[1]*YSTEP+10)
+    pyautogui.mouseUp()
 
 play()  
